@@ -134,7 +134,7 @@ static id<MKEReviewRequesterDelegate> delegate = nil;
             alertDelegate = [[MKEReviewRequester_AlertDelegate alloc] init];
             // This is retained (by init) and gets released when we handle the alert disappearing
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Enjoying this app?", @"")
-                                                                message:NSLocalizedString(@"If you're enjoying this versino of the app please let us know by reviewing it on the app store", @"") 
+                                                                message:NSLocalizedString(@"If you're enjoying this version of the app please let us know by reviewing it on the app store", @"") 
                                                                delegate:alertDelegate
                                                       cancelButtonTitle:NSLocalizedString(@"Remind me later", @"")
                                                       otherButtonTitles:NSLocalizedString(@"Yes, rate it!", @""),
