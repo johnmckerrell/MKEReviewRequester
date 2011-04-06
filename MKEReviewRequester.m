@@ -54,6 +54,7 @@ static NSInteger minRunCount = 0;
 static MKEReviewRequester_AlertDelegate *alertDelegate = nil;
 static NSInteger runCountDelay = 0;
 static id<MKEReviewRequesterDelegate> delegate = nil;
+static BOOL internetConnected = YES;
 
 + (void) setupWithAppLink:(NSString*)userAppLink 
                appVersion:(CGFloat)userAppVersion 
@@ -85,6 +86,10 @@ static id<MKEReviewRequesterDelegate> delegate = nil;
         [defaults setBool:NO forKey:@"MKE.appAskedForRating"];
         [defaults setInteger:0 forKey:@"MKE.runCount"];
     }
+}
+
++ (void) updateInternetConnectivity:(BOOL)present {
+    internetConnected = present;
 }
 
 + (void) rateApp {
@@ -125,7 +130,8 @@ static id<MKEReviewRequesterDelegate> delegate = nil;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if( [defaults boolForKey:@"MKE.appAskedForRating"] == NO 
        && [defaults boolForKey:@"MKE.reviewAllowed"] == YES
-       && alertDelegate == nil)
+       && alertDelegate == nil
+       && internetConnected)
     {
         NSTimeInterval timeInterval = [[NSDate date] timeIntervalSinceDate:[defaults objectForKey:@"MKE.appFirstRun"]];
         if (timeInterval >= minTimeInterval

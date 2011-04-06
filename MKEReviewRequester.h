@@ -33,6 +33,8 @@ typedef enum MKEReviewRequesterResult MKEReviewRequesterResult;
             runCountDelay:(NSInteger)userRunCountDelay
                  delegate:(id<MKEReviewRequesterDelegate>)userDelegate;
 
++ (void) updateInternetConnectivity:(BOOL)present;
+
 + (void) rateApp;
 
 + (void) delayRating;
