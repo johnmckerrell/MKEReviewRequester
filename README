@@ -1,0 +1,61 @@
+MKEReviewRequester
+John McKerrell 2011
+
+MKEReviewRequester is distributed under the terms of the Artistic License 2.0. For more
+details, see the full text of the license in the file LICENSE.
+
+MKEReviewRequester simplifies the display of an alert to regular users of your iOS
+app requesting that they review the app on the app store. To use it simply drop the
+two files into your code and then add three method calls to get it working.
+
+The principles and much of the code are taken, with permission, from this blog post:
+
+http://whiskybiscuit.co.uk/2011/tutorial-review-prompt/
+
+METHODS
+
++ (void) setupWithAppLink:(NSString*)userAppLink 
+               appVersion:(CGFloat)userAppVersion 
+      minimumTimeInterval:(NSTimeInterval)userMinTimeInterval 
+          minimumRunCount:(NSInteger)userMinRunCount 
+            runCountDelay:(NSInteger)userRunCountDelay
+                 delegate:(id<MKEReviewRequesterDelegate>)userDelegate;
+
+Call this to setup the environment, usually this would go in applicationDidFinishLaunching and sets up all of the variables the class will need. Arguments are as follows:
+    userAppLink         - The link to the app store.
+    userAppVersion      - Increasing this will allow the app to request another review, unless the user has chosen never to review.
+    userMinTimeInterval - The minimimum amount of time, in seconds, that must occur before a review is requested.
+    userMinRunCount     - The minimum number of "runs" before a review is requested.
+    runCountDelay       - If the user chooses to delay, they will not be asked again for this many "runs".
+    delegate            - If you pass a delegate, it will be called when the review alert is dismissed.
+
+EXAMPLE (and these are fairly sensible defaults for an ebook reader):
+
+    CGFloat appVersion = [[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"] floatValue];
+    [MKEReviewRequester setupWithAppLink:@"http://itunes.apple.com/app/chess-viewer/id410841427?mt=8" 
+                              appVersion:appVersion
+                     minimumTimeInterval:172800 // Two days
+                         minimumRunCount:10
+                           runCountDelay:30
+                                delegate:self];
+
+
++ (void) increaseRunCount;
+
+"Runs" can mean whatever you want it to, the number of times the app is launched or perhaps the number of times a game is completed, or an ebook is read. Simply call this method to increase the count.
+
+You could decide to put a call to this in applicationDidBecomeActive: or wherever would make sense to show that a user was engaging in your app.
+
++ (BOOL) checkAndShowPrompt;
+
+This is called at the point when the developer would expect the dialog to show, for an app using a navigation controller it might make sense to use the viewDidAppear method of the root view controller. You should make sure that this is called when it would be appropriate for the user to be interrupted.
+
+This method returns a boolean indicating whether or not an alert was shown. It is safe to run the method twice in succession, only the first will display the alert (if applicable) and therefore only the first would return true.
+
+To detect the alert being dismissed implement the MKEReviewRequesterDelegate protocol. The MKEReviewRequester will call the following method when the alert is dismissed (and in the case of a ranking, just before the app launches the URL to the app store).
+
+- (void) reviewRequesterDidFinishWithResult:(MKEReviewRequesterResult)result;
+
+Values for MKEReviewRequesterResult are: MKEReviewRequesterRated, MKEReviewRequesterDelayed, MKEReviewRequesterDisabled
+
+
